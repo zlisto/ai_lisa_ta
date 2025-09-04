@@ -42,7 +42,7 @@ router.post('/', async (req, res) => {
     if (systemPrompt.split(' ').length < chunkSize) {
       messages.push({ 
         role: 'system', 
-        content: [{ type: 'text', text: systemPrompt }] 
+        content: [{ type: 'input_text', text: systemPrompt }] 
       });
     } else {
       const words = systemPrompt.split(' ');
@@ -53,7 +53,7 @@ router.post('/', async (req, res) => {
       chunks.forEach(chunk => {
         messages.push({ 
           role: 'system', 
-          content: [{ type: 'text', text: chunk }] 
+          content: [{ type: 'input_text', text: chunk }] 
         });
       });
     }
@@ -62,16 +62,16 @@ router.post('/', async (req, res) => {
     session.messages.forEach(msg => {
       messages.push({
         role: msg.role,
-        content: [{ type: 'text', text: msg.content }]
+        content: [{ type: 'input_text', text: msg.content }]
       });
     });
     
     // Handle user message with or without image
     if (imageData) {
-      // User message with image - use correct format for gpt-4o
+      // User message with image - use correct format for Responses API
       const imageMessage = [
-        { type: 'text', text: message || "Here is the image" },
-        { type: 'image_url', image_url: { url: `data:image/jpeg;base64,${imageData}` } }
+        { type: 'input_text', text: message || "Here is the image" },
+        { type: 'input_image', image_url: { url: `data:image/jpeg;base64,${imageData}` } }
       ];
       messages.push({ role: 'user', content: imageMessage });
       console.log('Added image message with', imageData.length, 'characters of base64 data');
@@ -79,32 +79,29 @@ router.post('/', async (req, res) => {
       // Text-only user message
       messages.push({ 
         role: 'user', 
-        content: [{ type: 'text', text: message }] 
+        content: [{ type: 'input_text', text: message }] 
       });
       console.log('Added text-only message');
     }
     
-    // Query OpenAI - start simple without tools first
-    const requestOptions = {
+    // Use Responses API + file_search (RAG with your OpenAI Vector Store)
+    const vectorStoreId = process.env.OPENAI_VECTOR_STORE_ID;
+    const useFileSearch = Boolean(vectorStoreId);
+
+    console.log('Sending request to OpenAI with', messages.length, 'messages',
+                useFileSearch ? 'and file_search' : '(no vector store)');
+
+    const response = await openai.responses.create({
       model: 'gpt-4o',
-      messages: messages
-    };
+      input: messages,          // Responses API uses 'input' instead of 'messages'
+      tools: useFileSearch ? [{
+        type: 'file_search',
+        vector_store_ids: [vectorStoreId]
+      }] : [],
+      // (optional) ask the model to cite sources in-text
+      // reasoning: { effort: "medium" },   // if you want stronger retrieval reasoning
+    });
 
-    // Vector store integration - use the correct API approach
-    if (process.env.OPENAI_VECTOR_STORE_ID) {
-      console.log('Vector store ID found:', process.env.OPENAI_VECTOR_STORE_ID);
-      
-      // For now, we'll use basic chat without vector store
-      // Vector store integration requires Assistants API, not Chat Completions API
-      console.log('Vector store available but not integrated yet - using basic chat');
-      console.log('To enable vector store: need to implement Assistants API or custom function');
-    } else {
-      console.log('No vector store configured - using basic chat');
-    }
-
-    console.log('Sending request to OpenAI with', messages.length, 'messages');
-    
-    const response = await openai.chat.completions.create(requestOptions);
     console.log('OpenAI response received');
     
     // Add user message to session (handle both text and image messages)
@@ -119,8 +116,10 @@ router.post('/', async (req, res) => {
       session.messages.push({ role: 'user', content: message });
     }
     
-    // Get assistant response
-    const assistantResponse = response.choices[0].message.content;
+    // Responses API: easiest text is response.output_text
+    const assistantResponse = response.output_text ?? (
+      response.output?.[response.output.length - 1]?.content?.[0]?.text || ''
+    );
     session.messages.push({ role: 'assistant', content: assistantResponse });
     
     await session.save();
