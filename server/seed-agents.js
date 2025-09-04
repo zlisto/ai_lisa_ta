@@ -5,10 +5,21 @@ const path = require('path');
 const Agent = require('./models/Agent');
 
 // Connect to MongoDB
-mongoose.connect(process.env.MONGODB_URI, {
+const mongoUri = process.env.MONGODB_URI;
+const dbName = process.env.MONGODB_DATABASE || 'ailisaprobability';
+
+console.log(`🔍 Original URI: ${mongoUri}`);
+console.log(`🔍 Database name: ${dbName}`);
+
+// Connect without specifying database in URI - let Mongoose handle it
+mongoose.connect(mongoUri, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
+  dbName: dbName
 });
+
+console.log(`🔌 Connected to MongoDB database: ${dbName}`);
+console.log(`📊 Using collection: agents`);
 
 // Load system prompt from prompt.txt
 const promptPath = path.join(__dirname, 'prompt.txt');

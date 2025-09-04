@@ -1,3 +1,8 @@
 # OpenAI Configuration
 OPENAI_API_KEY=your_openai_api_key_here
 OPENAI_VECTOR_STORE_ID=
+
+# MongoDB Configuration
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net
+MONGODB_DATABASE=ailisaprobability
+MONGODB_COLLECTION=chats

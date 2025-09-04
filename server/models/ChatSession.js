@@ -14,4 +14,4 @@ const ChatSessionSchema = new mongoose.Schema({
   messages: [MessageSchema],
 });
 
-module.exports = mongoose.model('ChatSession', ChatSessionSchema);
+module.exports = mongoose.model('ChatSession', ChatSessionSchema, 'chats');

@@ -1,0 +1,14 @@
+{
+  "total_sessions": 0,
+  "total_messages": 0,
+  "user_messages": 0,
+  "assistant_messages": 0,
+  "unique_users": 0,
+  "unique_members": 0,
+  "users": [],
+  "members": [],
+  "date_range": {
+    "earliest": null,
+    "latest": null
+  }
+}

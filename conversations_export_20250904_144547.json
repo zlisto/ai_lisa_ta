@@ -1,0 +1,9 @@
+{
+  "conversations": [],
+  "total_sessions": 0,
+  "export_timestamp": "2025-09-04T14:45:47.324207",
+  "database_info": {
+    "mongodb_uri": "mongodb+srv://zlisto:5e0qqeEtb8oyyH4H@genaisocialmedia.umu2nzk.mongodb.net/",
+    "collection": "chatsessions"
+  }
+}
