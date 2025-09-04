@@ -109,6 +109,8 @@ A beautiful React-based chat application featuring AI Lisa, a specialized probab
 }
 ```
 
+> **⚠️ Important**: Use Tailwind CSS v3.4.0 specifically. Newer versions (v4+) have breaking changes with Create React App and PostCSS configuration that will cause build errors.
+
 ## 🔧 Updating Lisa's System Prompt
 
 To modify Lisa's personality, expertise, or behavior:
