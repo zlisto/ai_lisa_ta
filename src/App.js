@@ -22,7 +22,8 @@ function App() {
 
   useEffect(() => {
     // Create a new session on load
-    axios.post('/session', { username: USERNAME, member: MEMBER })
+    const apiUrl = process.env.REACT_APP_API_URL || '';
+    axios.post(`${apiUrl}/session`, { username: USERNAME, member: MEMBER })
       .then(res => setSessionId(res.data.sessionId));
   }, []);
 
@@ -67,7 +68,9 @@ function App() {
     setImagePreview(null);
     
     try {
-      const res = await axios.post('/chat', {
+      // Use production API URL if available
+      const apiUrl = process.env.REACT_APP_API_URL || '';
+      const res = await axios.post(`${apiUrl}/chat`, {
         sessionId,
         username: USERNAME,
         member: MEMBER,
