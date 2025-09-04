@@ -60,10 +60,17 @@ router.post('/', async (req, res) => {
     
     // Add chat history
     session.messages.forEach(msg => {
-      messages.push({
-        role: msg.role,
-        content: [{ type: 'input_text', text: msg.content }]
-      });
+      if (msg.role === 'assistant') {
+        messages.push({
+          role: msg.role,
+          content: [{ type: 'output_text', text: msg.content }]
+        });
+      } else {
+        messages.push({
+          role: msg.role,
+          content: [{ type: 'input_text', text: msg.content }]
+        });
+      }
     });
     
     // Handle user message with or without image
