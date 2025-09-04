@@ -52,7 +52,6 @@ class ConversationDownloader:
         self.chat_sessions = self.db[self.collection_name]
         
         print(f"🔌 Connected to MongoDB:")
-        print(f"   URI: {self.mongodb_uri}")
         print(f"   Database: {self.database_name}")
         print(f"   Collection: {self.collection_name}")
         
@@ -123,8 +122,8 @@ class ConversationDownloader:
             'total_sessions': len(conversations),
             'export_timestamp': datetime.now().isoformat(),
             'database_info': {
-                'mongodb_uri': self.mongodb_uri,
-                'collection': 'chatsessions'
+                'database': self.database_name,
+                'collection': self.collection_name
             }
         }
         
