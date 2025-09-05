@@ -210,7 +210,7 @@ function App() {
       {/* Chat Container */}
       <div className="w-full max-w-5xl mx-auto mb-6">
         <div 
-          className="bg-gray-900/80 backdrop-blur-sm rounded-2xl p-6 h-[800px] overflow-y-auto border-2 border-pink-500/50 shadow-2xl custom-scrollbar relative"
+          className="bg-gray-900/80 backdrop-blur-sm rounded-2xl p-6 h-[720px] overflow-y-auto border-2 border-pink-500/50 shadow-2xl custom-scrollbar relative"
           onPaste={handleChatPaste}
           tabIndex={0}
         >
